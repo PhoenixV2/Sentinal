@@ -42,6 +42,7 @@ float pitch = 0.0f;
 float roll = 0.0f;
 bool firstMouse = true;
 bool godmode = true;
+bool cursorMode = true;
 
 int main(int argc, char* argv[]){
 	printf("Hello world\n");
@@ -423,11 +424,13 @@ int main(int argc, char* argv[]){
 			view = glm::lookAt(cameraPos, cameraTarget, cameraUp); // Camera tracks towards the cameraTarget position
 		}else{
 			// cameraPos = glm::vec3(0.0f, 0.0f, cameraPos_Z);
-			glm::vec3 direction;
-			direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-			direction.y = sin(glm::radians(pitch));
-			direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-			cameraFront = glm::normalize(direction);
+			if (cursorMode){
+				glm::vec3 direction;
+				direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+				direction.y = sin(glm::radians(pitch));
+				direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+				cameraFront = glm::normalize(direction);
+			}
 			if (!godmode)
 				cameraPos.y = 0.0f;
 			view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp); // Camera looks at the space directly in front of it
@@ -491,6 +494,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height){
 }
 
 void processInput(GLFWwindow *window, float deltaTime, glm::vec3 *cameraPos, glm::vec3 *cameraFront, glm::vec3 *cameraUp){
+	// These keys need better debouncing :|
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
 		glfwSetWindowShouldClose(window, true);
 	}
@@ -508,11 +512,24 @@ void processInput(GLFWwindow *window, float deltaTime, glm::vec3 *cameraPos, glm
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		*cameraPos += cameraSpeed * *cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        *cameraPos -= cameraSpeed * *cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        *cameraPos -= glm::normalize(glm::cross(*cameraFront, *cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        *cameraPos += glm::normalize(glm::cross(*cameraFront, *cameraUp)) * cameraSpeed;		
+		*cameraPos -= cameraSpeed * *cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		*cameraPos -= glm::normalize(glm::cross(*cameraFront, *cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		*cameraPos += glm::normalize(glm::cross(*cameraFront, *cameraUp)) * cameraSpeed;
+
+	// Capture or uncapture the mouse
+	// Currently doesn't work super nicely - still tracks the cursor position even when the cursor isn't bound
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
+		if (cursorMode){
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			cursorMode = false;
+		}else{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			cursorMode = true;
+			firstMouse = true;
+		}
+	}
 }
 
 void scrollScale(GLFWwindow *window, double xoffset, double yoffset){
