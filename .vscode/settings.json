@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"xstring": "cpp",
+		"shader.h": "c",
+		"cmath": "cpp",
+		"vector": "cpp"
+	}
+}
