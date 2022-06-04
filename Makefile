@@ -8,7 +8,7 @@ CFLAGS = -g -Wall
 
 SRC =		main.cpp renderer.cpp
 OBJ =		main.o renderer.o
-EXE =		LearningOpenGl.exe
+EXE =		Sentinel.exe
 
 # Adding compilation for ImGui
 IMGUI_INC = ImGui/include
