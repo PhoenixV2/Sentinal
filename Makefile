@@ -6,8 +6,8 @@ CC = g++
 CFLAGS = -g -Wall
 
 
-SRC =		main.cpp
-OBJ =		main.o
+SRC =		main.cpp renderer.cpp
+OBJ =		main.o renderer.o
 EXE =		LearningOpenGl.exe
 
 # Adding compilation for ImGui

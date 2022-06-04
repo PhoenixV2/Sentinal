@@ -9,9 +9,11 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "GLFW/glfw3native.h"
+// #include "glad/glad.h"
+// #include "GLFW/glfw3.h"
+// #include "GLFW/glfw3native.h"
+
+#include "renderer.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -198,15 +200,21 @@ int main(int argc, char* argv[]){
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	glBindVertexArray(VAOs[2]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+	// glBindVertexArray(VAOs[2]);
+	// glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
+    // // position attribute
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    // glEnableVertexAttribArray(0);
+    // // texture coord attribute
+    // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    // glEnableVertexAttribArray(1);
+
+	VertexBuffer vb(cube, sizeof(cube));
+	VertexArray va;
+	va.Push(3); 	// Position Attribute
+	va.Push(2);		// Texture Coord Attribute
+	va.AddBuffer(vb);
 
 	// create_buffers(&VAO1, &VBO1, triangle1, sizeof(triangle1));
 	// create_buffers(&VAO2, &VBO2, triangle2, sizeof(triangle2));
@@ -440,7 +448,8 @@ int main(int argc, char* argv[]){
 		shader3.setMat4("view", view);
 		// shader3.setMat4("model", model1);
 
-		glBindVertexArray(VAOs[2]);
+		// glBindVertexArray(VAOs[2]);
+		va.Bind();
 		// glDrawArrays(GL_TRIANGLES, 0, 36);
 		for(unsigned int i=0; i < 10;i++){
 			glm::mat4 model = glm::mat4(1.0f);
@@ -454,7 +463,8 @@ int main(int argc, char* argv[]){
             model = glm::rotate(model, glm::radians(angle)+(float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
             shader3.setMat4("model", model);
 			
-			glBindVertexArray(VAOs[2]);
+			// glBindVertexArray(VAOs[2]);
+			va.Bind();
             glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
